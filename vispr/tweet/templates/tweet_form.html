@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {% if form.instance.id %}
+        Edit Tweet 🖊
+    {% else %}
+        New Post ➕
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if form.instance.id %}
+        <h1 class="text-center mt-4">Edit Tweet</h1>
+    {% else %}
+        <h1 class="text-center mt-4">Create Tweet</h1>
+    {% endif %}
+
+    <form class="form" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-success my-2" type="submit">Submit</button>
+    </form>
+
+    <a href="{% url "tweet_list" %}">Cancel</a>
+
+<div class="container">
+</div>
+
+{% endblock %}

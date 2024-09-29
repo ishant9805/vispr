@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home@vispr
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-4">Welcome...</h1>
+
+<a class="btn btn-success" href="{% url "tweet_create" %}">+ New Post</a>
+
+{% comment %} Modal {% endcomment %}
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Task Details</h5>
+                <button type="button" class="btn-close btn btn-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Add form inside modal body -->
+            <h4>Are you sure you want to delete this tweet?</h4>
+            <div class="modal-footer">
+                    <form id="tweetForm" method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-danger float-right" form="tweetForm">Delete</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary btn-closer" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% comment %}  {% endcomment %}
+<div class="container row gap-3">
+    {% for tweet in tweets %}
+    <div class="card mt-2" style="width: 18rem;">
+        <img class="card-img-top mt-2" src="{{ tweet.photo.url }}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">{{ tweet.user.username }}</h5>
+          <p class="card-text">{{ tweet.text }}</p>
+          <a href="{% url "tweet_edit" tweet.id %}" class="btn btn-primary">Edit</a>
+          <a  class="btn btn-danger mx-2" id="deleteTweet" data-tweet-id="{{ tweet.id }}">Delete</a>
+        </div>
+        </div>
+    {% endfor %}
+</div>
+<script>
+    
+    document.querySelector('.btn-close').addEventListener('click', function() {
+        var taskModal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
+        taskModal.hide();
+    });
+    document.querySelector('.btn-closer').addEventListener('click', function() {
+        var taskModal = bootstrap.Modal.getInstance(document.getElementById('taskModal'));
+        taskModal.hide();
+    });
+    document.querySelectorAll('#deleteTweet').forEach(button => {
+        button.addEventListener('click', () => {
+            var tweetID = button.getAttribute('data-tweet-id');
+            let url = "{% url 'tweet_delete' tweet_id=12345 %}".replace(/12345/, tweetID.toString());
+            console.log(`url: ${url}`)
+            // Get the form element and update its action attribute
+            document.getElementById('tweetForm').action = url;
+    
+            // Show the modal manually using Bootstrap's JavaScript
+            var taskModal = new bootstrap.Modal(document.getElementById('taskModal'));
+            taskModal.show();
+        });
+    });
+</script>
+{% endblock %}
